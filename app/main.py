@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI, UploadFile, File, Form, Request
 
-from app.schemas import RegressorInput
+from schemas import RegressorInput
 
 from pydantic import ValidationError
 
