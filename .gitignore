@@ -1,1 +1,5 @@
-/models
+/app/models
+/venv
+
+__pycache__
+

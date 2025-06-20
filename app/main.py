@@ -28,15 +28,15 @@ def read_root():
 
 
 #endpoints
-@app.post("/upload_csv/",
-          tags= ["📨 Carregar arquivo .csv atualizado 📨"],
-          description= "Endpoint para *upload* do .csv contendo dados atualizados para consulta do Endpoint de predição")
+# @app.post("/upload_csv/",
+#           tags= ["📨 Carregar arquivo .csv atualizado 📨"],
+#           description= "Endpoint para *upload* do .csv contendo dados atualizados para consulta do Endpoint de predição")
 
-async def upload_csv(csv_file: UploadFile = File(...)):
-    contents = await csv_file.read()
-    with open("data/arquivo_base_acotubo.csv", "wb") as f:
-        f.write(contents)
-    return {"message": "Arquivo salvo com sucesso."}
+# async def upload_csv(csv_file: UploadFile = File(...)):
+#     contents = await csv_file.read()
+#     with open("data/arquivo_base_acotubo.csv", "wb") as f:
+#         f.write(contents)
+#     return {"message": "Arquivo salvo com sucesso."}
 
 
 
@@ -46,7 +46,7 @@ async def upload_csv(csv_file: UploadFile = File(...)):
 
 async def predict(input: RegressorInput, request: Request):
     #lendo .csv inputado no Endpoint acima
-    df= pd.read_csv('data/arquivo_base_acotubo.csv')
+    df= pd.read_csv('data/poc_acotubo_17_06_2025.csv')
     #removendo aspas duplas e substituindo por aspas simples para tentar corrigir erro da API (json input no formato incorreto)
     df['ProdutoDescricao']= df['ProdutoDescricao'].str.replace('"', "'", regex= False)
     
@@ -114,7 +114,7 @@ async def predict(input: RegressorInput, request: Request):
             preco= input.nuPrecoGerenciaTotal - input.nuPrecoGerenciaTotal*(desconto/100)
             range_preco.append(preco)
         else:
-            preco= input.nuPrecoGerenciaTotal + input.nuPrecoGerenciaTotal*(desconto/100)
+            preco= input.nuPrecoGerenciaTotal - input.nuPrecoGerenciaTotal*(desconto/100)
             range_preco.append(preco)
     
     
@@ -130,5 +130,3 @@ async def predict(input: RegressorInput, request: Request):
     
     #printando resultados
     return resultados
-
-
