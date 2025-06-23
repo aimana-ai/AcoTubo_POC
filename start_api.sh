@@ -1,20 +1,48 @@
 #!/bin/bash
 
-echo "📦 Baixando a API AIMANA..."
+echo "====================================="
+echo "  🧠 AIMANA API - Instalador Linux/Mac"
+echo "====================================="
+echo
 
-# Baixar um zip do GitHub (ou outra URL pública com o projeto completo)
-curl -L -o aimana_api.zip https://github.com/aimana-ai/AcoTubo_POC.git/archive/refs/heads/main.zip
+# URL correta
+ZIP_URL="https://github.com/aimana-ai/AcoTubo_POC/archive/refs/heads/main.zip"
+ZIP_FILE="aimana_api.zip"
+EXTRACT_FOLDER="AcoTubo_POC-main"
+
+# Verificar se o Docker está instalado
+if ! command -v docker &> /dev/null
+then
+    echo "❌ Docker não está instalado ou não está no PATH."
+    exit 1
+fi
+
+# Baixar o projeto
+echo "⏬ Baixando a API do GitHub..."
+curl -L -o "$ZIP_FILE" "$ZIP_URL"
+
+if [ ! -f "$ZIP_FILE" ]; then
+    echo "❌ Falha ao baixar o projeto. Verifique a URL ou sua conexão."
+    exit 1
+fi
 
 # Descompactar
-unzip aimana_api.zip
-cd aimana-api-main  # ou o nome da pasta descompactada
+echo "📦 Extraindo arquivos..."
+unzip -o "$ZIP_FILE" > /dev/null
 
-echo "🐳 Subindo a API com Docker..."
+# Entrar na pasta
+cd "$EXTRACT_FOLDER" || { echo "❌ Erro ao acessar a pasta $EXTRACT_FOLDER."; exit 1; }
+
+# Subir a API com Docker Compose
+echo "🐳 Iniciando a API com Docker Compose..."
 docker-compose up --build -d
 
 if [ $? -eq 0 ]; then
+    echo
     echo "✅ API AIMANA iniciada com sucesso!"
     echo "🌐 Acesse: http://localhost:8000/docs"
 else
-    echo "❌ Erro ao iniciar a API. Verifique se o Docker está em execução."
+    echo "❌ Erro ao subir a API. Verifique se o Docker está rodando."
 fi
+
+echo
