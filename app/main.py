@@ -51,8 +51,8 @@ async def predict(input: RegressorInput, request: Request):
     df['ProdutoDescricao']= df['ProdutoDescricao'].str.replace('"', "'", regex= False)
     
     #load models
-    conversion_model = joblib.load(os.path.join("app", "models", "2_poc_conversion_model_rf_df_16062025.joblib"))
-    margem_model = joblib.load(os.path.join("app", "models", "2_poc_margem_model_xgb_df_16062025.joblib"))
+    conversion_model = joblib.load(os.path.join("app", "models", "2_poc_conversion_model_rf_df_16062025.pkl"))
+    margem_model = joblib.load(os.path.join("app", "models", "2_poc_margem_model_xgb_df_16062025.pkl"))
     
     #descontos
     range_descontos = np.arange(-5, 20.5, 0.2)
