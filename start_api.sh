@@ -33,9 +33,14 @@ unzip -o "$ZIP_FILE" > /dev/null
 # Entrar na pasta
 cd "$EXTRACT_FOLDER" || { echo "❌ Erro ao acessar a pasta $EXTRACT_FOLDER."; exit 1; }
 
-# Subir a API com Docker Compose
+# Subir a API com Docker Compose (compatível com versões antigas e novas do Docker)
 echo "🐳 Iniciando a API com Docker Compose..."
-docker-compose up --build -d
+
+if command -v docker-compose &> /dev/null; then
+    docker-compose up --build -d
+else
+    docker compose up --build -d
+fi
 
 if [ $? -eq 0 ]; then
     echo
