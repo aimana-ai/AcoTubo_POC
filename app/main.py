@@ -1,6 +1,6 @@
 #uvicorn app.main:app --reload
 
-from fastapi import FastAPI, UploadFile, File, Form, Request
+from fastapi import FastAPI, UploadFile, File, Form, Request, HTTPException
 
 from app.schemas import RegressorInput
 
@@ -71,9 +71,17 @@ async def predict(input: RegressorInput, request: Request):
         'nuPrecoGerenciaTotal': input.nuPrecoGerenciaTotal
     }
 
+    # Check if ProdutoDescricao exists in the dataset
+    produto_data = df[df['ProdutoDescricao'] == user_inputs["ProdutoDescricao"]]
+    if produto_data.empty:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"ProdutoDescricao '{user_inputs['ProdutoDescricao']}' não encontrado no dataset. Verifique se o valor está correto."
+        )
+
     user_inputs2 = {
-        'totalSold': df[df['ProdutoDescricao'] == user_inputs["ProdutoDescricao"]]['totalSold'].iloc[-1],
-        'TotalQuoted': df[df['ProdutoDescricao'] == user_inputs["ProdutoDescricao"]]['TotalQuoted'].iloc[-1]  
+        'totalSold': produto_data['totalSold'].iloc[-1],
+        'TotalQuoted': produto_data['TotalQuoted'].iloc[-1]  
     }
 
 
@@ -96,7 +104,7 @@ async def predict(input: RegressorInput, request: Request):
     })
 
     #extraindo somente os registros que possuem um conversion rate acima do limite calculado em relação ao ultimo registro do produto
-    limit = df[df['ProdutoDescricao'] == user_inputs["ProdutoDescricao"]].iloc[-1]['ConversionRate_%'] * input.limite
+    limit = produto_data.iloc[-1]['ConversionRate_%'] * input.limite
 
     #extraindo o valor de máximo de margem encontrado
     max_margem = df_results[df_results['ConversionRate_Predicted'] >= limit]['Margem_Predicted'].max()
