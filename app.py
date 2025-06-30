@@ -138,14 +138,18 @@ with tab1:
     col1_1, col1_2 = st.columns(2)
     
     with col1_1:
-        limite = st.slider(
-            "Limite da Taxa de Conversão",
+        # Slider showing percentage but returning decimal value
+        limite_percent = st.slider(
+            "Limite da Taxa de Conversão (%)",
             min_value=0.0,
-            max_value=1.0,
-            value=0.8,
-            step=0.05,
-            help="Taxa de conversão mínima aceitável (0.0 a 1.0)"
+            max_value=100.0,
+            value=0.5,
+            step=0.5,
+            help="Taxa de conversão mínima aceitável (0% a 100%)"
         )
+        # Convert percentage to decimal for API
+        limite = limite_percent / 100
+        
         Year = st.number_input(
             "Ano",
             min_value=2020,
