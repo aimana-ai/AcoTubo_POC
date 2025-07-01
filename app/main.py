@@ -68,7 +68,8 @@ async def predict(input: RegressorInput, request: Request):
         'Canal': input.Canal,
         'EmpresaNome': input.EmpresaNome,
         'ClienteCNPJCPF': input.ClienteCNPJCPF, 
-        'nuPrecoGerenciaTotal': input.nuPrecoGerenciaTotal
+        'nuPrecoGerenciaTotal': input.nuPrecoGerenciaTotal,
+        'nuPrecoCustoTotal': input.nuPrecoCustoTotal
     }
 
     # Check if ProdutoDescricao exists in the dataset
@@ -132,7 +133,8 @@ async def predict(input: RegressorInput, request: Request):
         "Conversion Rate encontrado": float(conversion_rate_encontrado), 
         "Desconto(s) encontrado(s)": [float(d) for d in desconto_encontrado],
         "Preço original": float(input.nuPrecoGerenciaTotal),
-        "Preço(s) encontrado(s)": [float(p) for p in range_preco]
+        "Preço(s) encontrado(s)": [float(p) for p in range_preco],
+        "Custo Total": float(input.nuPrecoCustoTotal)
     }
     
     
