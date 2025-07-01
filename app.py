@@ -225,9 +225,16 @@ with tab3:
     nuPrecoGerenciaTotal = st.number_input(
         "Preço Total de Gerência (R$)",
         min_value=0.0,
-        value=1000.0,
+        value=10.0,
         step=10.0,
         help="Digite o preço total de gerência"
+    )
+    nuPrecoCustoTotal = st.number_input(
+        "Preço Total de Custo (R$)",
+        min_value=0.0,
+        value=7.0,
+        step=10.0,
+        help="Digite o preço total de custo"
     )
 
 # Prediction button and results
@@ -277,7 +284,8 @@ if predict_button:
             "Canal": Canal,
             "EmpresaNome": EmpresaNome,
             "ClienteCNPJCPF": ClienteCNPJCPF,
-            "nuPrecoGerenciaTotal": nuPrecoGerenciaTotal
+            "nuPrecoGerenciaTotal": nuPrecoGerenciaTotal,
+            "nuPrecoCustoTotal": nuPrecoCustoTotal
         }
         
         try:
@@ -294,7 +302,7 @@ if predict_button:
                 st.markdown("### 📈 Resultados da Previsão")
                 
                 # Create metric cards
-                col_result1, col_result2, col_result3, col_result4 = st.columns(4)
+                col_result1, col_result2, col_result3, col_result4, col_result5 = st.columns(5)
                 
                 with col_result1:
                     st.markdown(f"""
@@ -328,6 +336,22 @@ if predict_button:
                     </div>
                     """, unsafe_allow_html=True)
                 
+                # Calculate total margin (gross value)
+                try:
+                    margem_percent = result['Margem Máxima encontrada'] / 100
+                    preco_recomendado = result['Preço(s) encontrado(s)'][0]
+                    total_margem = margem_percent * preco_recomendado
+                except Exception:
+                    total_margem = 0.0
+                
+                with col_result5:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <h4>🧾 Total em Margem</h4>
+                        <h2>R$ {total_margem:,.2f}</h2>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
                 # Detailed results
                 st.markdown("### 📋 Análise Detalhada")
                 
@@ -338,6 +362,7 @@ if predict_button:
                     st.write(f"**Preço Original:** R$ {result['Preço original']:,.2f}")
                     st.write(f"**Preço Recomendado:** R$ {result['Preço(s) encontrado(s)'][0]:,.2f}")
                     st.write(f"**Diferença de Preço:** R$ {result['Preço(s) encontrado(s)'][0] - result['Preço original']:,.2f}")
+                    st.write(f"**Custo Total:** R$ {nuPrecoCustoTotal:,.2f}")
                 
                 with col_detail2:
                     st.markdown("#### Todas as Opções de Desconto")
